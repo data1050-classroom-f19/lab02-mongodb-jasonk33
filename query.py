@@ -23,6 +23,7 @@ def query1(minFare, maxFare):
         An array of documents.
     """
     docs = db.taxi.find(
+        { 'fare_amount': { $gte: minFare, $lte: maxFare} }
         # TODO: implement me
     )
 
