@@ -23,8 +23,14 @@ def query1(minFare, maxFare):
         An array of documents.
     """
     docs = db.taxi.find(
-        { 'fare_amount': { $gte: minFare, $lte: maxFare} }
         # TODO: implement me
+        {'fare_amount': {"$gte": minFare, "$lte": maxFare}}
+        {
+            '_id': 0,
+            'pickup_longitude': 1,
+            'pickup_latitude': 1,
+            'fare_amount': 1
+        }
     )
 
     result = [doc for doc in docs]
@@ -77,8 +83,15 @@ def query3():
     Returns:
         An array of documents.
     """
-    docs = db.airbnb.aggregate(
-        # TODO: implement me
+    docs = db.airbnb.aggregate({
+        "$group":
+            {
+                "_id": "$neighbourhood_group",
+                "avg_price": {"$avg": "$price"}}
+            },
+            {
+                "$sort": {"avg_price": -1}
+            }
     )
 
     result = [doc for doc in docs]
@@ -95,8 +108,21 @@ def query4():
     Returns:
         An array of documents.
     """
-    docs = db.taxi.aggregate(
-        # TODO: implement me
+    docs = db.taxi.aggregate({
+        "$group":
+            {
+                "_id": {"$hour": "$pickup_datetime"},
+                "avg_fare": {"$avg": "$fare_amount"},
+                "avg_distance": {"$avg":
+                                    {"$add": 
+                                        [{"$abs": {"$subtract": ["$dropoff_longitude", "$pickup_longitude"]}},
+                                        {"$abs": {"$subtract": ["$dropoff_latitude", "$pickup_latitude"]}}]}
+                                    },
+                "count": {"$sum": 1}
+            }},
+            {
+                "$sort": {"avg_fare": -1}
+            }
     )
     result = [doc for doc in docs]
     return result
