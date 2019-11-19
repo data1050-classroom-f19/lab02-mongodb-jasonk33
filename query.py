@@ -24,7 +24,7 @@ def query1(minFare, maxFare):
     """
     docs = db.taxi.find(
         # TODO: implement me
-        {'fare_amount': {"$gte": minFare, "$lte": maxFare}}
+        {'fare_amount': {"$gte": minFare, "$lte": maxFare}},
         {
             '_id': 0,
             'pickup_longitude': 1,
@@ -114,7 +114,7 @@ def query4():
                 "_id": {"$hour": "$pickup_datetime"},
                 "avg_fare": {"$avg": "$fare_amount"},
                 "avg_distance": {"$avg":
-                                    {"$add": 
+                                    {"$add":
                                         [{"$abs": {"$subtract": ["$dropoff_longitude", "$pickup_longitude"]}},
                                         {"$abs": {"$subtract": ["$dropoff_latitude", "$pickup_latitude"]}}]}
                                     },
@@ -128,26 +128,28 @@ def query4():
     return result
 
 
-def query5():
-    """ Finds airbnbs within 1000 meters from location (longitude, latitude) using geoNear. 
-        Find average fare for each hour.
-        Find average manhattan distance travelled for each hour.
-        Count total number of rides per pickup hour.
-        Sort by average fare in descending order.
+# def query5():
+#     """ Finds airbnbs within 1000 meters from location (longitude, latitude) using geoNear. 
 
-    Projection:
-        dist
-        location
-        name
-        neighbourhood
-        neighbourhood_group
-        price
-        room_type
+#     Projection:
+#         dist
+#         name
+#         neighbourhood
+#         neighbourhood_group
+#         price
+#         room_type
 
 
-    """
-    docs = db.airbnb.aggregate(
-        # TODO: implement me
-    )
-    result = [doc for doc in docs]
-    return result
+#     """
+#     docs = db.airbnb.aggregate(
+#         {
+#             "$geoNear": {
+#                 "near": { "type": "Point", "coordinates": [longitude, latitude] },
+#                 "distanceField": "dist.calculated",
+#                 maxDistance: 1000
+#                 spherical: false
+#             }
+#         }
+#     )
+#     result = [doc for doc in docs]
+#     return result
